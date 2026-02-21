@@ -11,10 +11,31 @@ services:
 
   mongo:
     image: mongo:7
-    ports:
-      - "27017:27017"
+ #   ports:
+ #     - "27017:27017"
     volumes:
       - mongo_data:/data/db
 
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: credit_ku
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  api-mysql:
+    build: ./backend-mysql
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+      - DATABASE_URL=mysql://root:rootpass@mysql:3306/credit_ku
+    depends_on:
+      - mysql
+
 volumes:
   mongo_data:
+  mysql_data:
